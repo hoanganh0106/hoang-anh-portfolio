@@ -1,12 +1,16 @@
+'use client'
+
 import Link from 'next/link'
 import type { Project } from '@/lib/types'
+import { projectVi } from '@/lib/project-i18n'
+import { useLanguage } from '@/components/language/LanguageProvider'
 
 type Props = { projects: Project[] }
 
-function status(project: Project) {
-  if (project.status === 'in-progress') return 'In progress · research prototype'
-  if (project.disclosure === 'summary-only') return 'Summary only · no public paper or results claimed'
-  return 'Completed · public project'
+function status(project: Project, vi: boolean) {
+  if (project.status === 'in-progress') return vi ? 'Đang thực hiện · research prototype' : 'In progress · research prototype'
+  if (project.disclosure === 'summary-only') return vi ? 'Chỉ công bố summary · chưa tuyên bố public paper hay results' : 'Summary only · no public paper or results claimed'
+  return vi ? 'Hoàn thành · public project' : 'Completed · public project'
 }
 
 function art(project: Project) {
@@ -69,13 +73,15 @@ function ProjectDiagram({ project }: { project: Project }) {
 }
 
 export default function FeaturedWork({ projects }: Props) {
+  const { language } = useLanguage()
+  const vi = language === 'vi'
   return (
     <section className="home-section" aria-labelledby="selected-work-title">
-      <div className="home-section-heading"><p className="home-eyebrow">01 / Selected work</p><h2 id="selected-work-title">Selected work, documented precisely.</h2></div>
+      <div className="home-section-heading"><p className="home-eyebrow">01 / {vi ? 'Project tiêu biểu' : 'Selected work'}</p><h2 id="selected-work-title">{vi ? 'Project được ghi chép rõ ràng, đúng mức.' : 'Selected work, documented precisely.'}</h2></div>
       <div className="featured-work-grid">
         {projects.map((project, index) => <article className={`project-card ${art(project)}`} key={project.slug}>
           <div className="project-art" aria-hidden="true"><span className="project-art-index">0{index + 1}</span><ProjectDiagram project={project} /></div>
-          <div className="project-card-body"><p className="project-meta">{project.domainIds.join(' · ')} · {status(project)}</p><h3>{project.title}</h3><p>{project.summary}</p><Link className="project-link" href={`/projects/${project.slug}`}>Read project detail <span aria-hidden="true">↗</span></Link></div>
+          <div className="project-card-body"><p className="project-meta">{project.domainIds.join(' · ')} · {status(project, vi)}</p><h3>{project.title}</h3><p>{vi ? projectVi[project.slug]?.summary ?? project.summary : project.summary}</p><Link className="project-link" href={`/projects/${project.slug}`}>{vi ? 'Xem chi tiết project' : 'Read project detail'} <span aria-hidden="true">↗</span></Link></div>
         </article>)}
       </div>
     </section>

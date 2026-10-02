@@ -1,0 +1,1 @@
+export default function LanguageScript(){return <script dangerouslySetInnerHTML={{__html:`try{var k='portfolio-language',s=localStorage.getItem(k),l=s==='vi'?'vi':'en';document.documentElement.dataset.lang=l;document.documentElement.lang=l}catch(e){document.documentElement.dataset.lang='en';document.documentElement.lang='en'}`}}/>}

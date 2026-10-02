@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import { getProject, publishedProjects } from '@/lib/projects'
 import { domains } from '@/lib/domains'
 import { siteUrl } from '@/lib/site-config'
+import Localized from '@/components/language/Localized'
+import { projectVi } from '@/lib/project-i18n'
 
 export const dynamicParams = false
 
@@ -35,6 +37,7 @@ export default async function ProjectDetail({
   const { slug } = await params
   const p = getProject(slug)
   if (!p) notFound()
+  const viCopy = projectVi[p.slug]
 
   const related = publishedProjects()
     .filter((x) => x.slug !== p.slug && x.domainIds.some((id) => p.domainIds.includes(id)))
@@ -44,7 +47,7 @@ export default async function ProjectDetail({
     <article className="container detail">
       <nav className="detail__breadcrumb" aria-label="Breadcrumb">
         <Link className="text-link" href="/projects">
-          ← All projects
+          ← <Localized en="All projects" vi="Tất cả project" />
         </Link>
       </nav>
 
@@ -55,7 +58,7 @@ export default async function ProjectDetail({
           <span className="disclosure-pill">{p.disclosure === 'summary-only' ? 'SUMMARY DISCLOSURE' : 'PUBLIC REPO'}</span>
         </div>
         <h1 className="detail__title">{p.title}</h1>
-        <p className="lede">{p.summary}</p>
+        <p className="lede"><Localized en={p.summary} vi={viCopy?.summary ?? p.summary} /></p>
 
         <div className="detail__meta-strip">
           <div>
@@ -64,13 +67,13 @@ export default async function ProjectDetail({
           </div>
           {p.event && (
             <div>
-              <span className="technical-label">PRESENTATION / VENUE</span>
+              <span className="technical-label"><Localized en="PRESENTATION / VENUE" vi="TRÌNH BÀY / SỰ KIỆN" /></span>
               <p>{p.event}</p>
             </div>
           )}
           <div>
-            <span className="technical-label">RECORD LEVEL</span>
-            <p>{p.disclosure === 'public' ? 'Open-source Artifact' : 'Academic Research Note'}</p>
+            <span className="technical-label"><Localized en="RECORD LEVEL" vi="MỨC CÔNG BỐ" /></span>
+            <p>{p.disclosure === 'public' ? <Localized en="Open-source Artifact" vi="Open-source Artifact" /> : <Localized en="Academic Research Note" vi="Academic Research Note" />}</p>
           </div>
         </div>
       </header>
@@ -90,13 +93,13 @@ export default async function ProjectDetail({
             <path d="M0 86 C40 60 60 110 100 86 S160 60 200 86 S260 110 300 86 S360 60 400 86 S460 110 500 86 S560 60 600 86" fill="none" stroke="var(--text)" strokeOpacity="0.45" strokeWidth="1.75" />
             <path d="M0 35 C50 70 80 15 130 45 S210 85 260 35 S340 75 390 35 S470 75 520 40 S570 15 600 45" fill="none" stroke="var(--trace)" strokeOpacity="0.7" strokeWidth="1.25" strokeDasharray="4 2" />
           </svg>
-          <figcaption>Conceptual waveform visual; it does not represent measured data or results.</figcaption>
+          <figcaption><Localized en="Conceptual waveform visual; it does not represent measured data or results." vi="Conceptual waveform visual; không đại diện cho measured data hay results." /></figcaption>
         </figure>
       )}
 
       {p.slug === 'edge-ai-stethoscope' && (
         <section className="detail__pipeline-section">
-          <h2>Concept pipeline</h2>
+          <h2><Localized en="Concept pipeline" vi="Concept pipeline" /></h2>
           <ol className="pipeline">
             {p.pipeline?.map((step, idx) => (
               <li key={step} className="pipeline__item">
@@ -105,28 +108,28 @@ export default async function ProjectDetail({
               </li>
             ))}
           </ol>
-          <p className="meta">Conceptual pipeline for a research prototype; clinical validation is not claimed.</p>
+          <p className="meta"><Localized en="Conceptual pipeline for a research prototype; clinical validation is not claimed." vi="Conceptual pipeline cho research prototype; không tuyên bố clinical validation." /></p>
         </section>
       )}
 
       {p.overview && (
         <section className="detail__overview">
-          <h2>Project overview</h2>
-          <p>{p.overview}</p>
+          <h2><Localized en="Project overview" vi="Tổng quan project" /></h2>
+          <p><Localized en={p.overview} vi={viCopy?.overview ?? p.overview} /></p>
         </section>
       )}
 
       <section className="detail__section">
-        <h2>What I built</h2>
+        <h2><Localized en="What I built" vi="Những gì tôi đã xây dựng" /></h2>
         <ul className="bullet-list">
-          {p.contribution.map((item) => <li key={item}>{item}</li>)}
+          {p.contribution.map((item, index) => <li key={item}><Localized en={item} vi={viCopy?.contribution?.[index] ?? item} /></li>)}
         </ul>
       </section>
 
       {/* Architecture & Structure */}
       {p.architecture && p.architecture.length > 0 && (
         <section className="detail__section">
-          <h2>Architecture &amp; System Flow</h2>
+          <h2><Localized en="Architecture & System Flow" vi="Architecture & System Flow" /></h2>
           <ul className="bullet-list">
             {p.architecture.map((arch) => (
               <li key={arch}>{arch}</li>
@@ -136,7 +139,7 @@ export default async function ProjectDetail({
       )}
 
       <section className="detail__section">
-        <h2>Technical outline</h2>
+        <h2><Localized en="Technical outline" vi="Technical outline" /></h2>
         <div className="tech-chip-grid">
           {p.technologies.map((tech) => <span key={tech} className="tech-chip">{tech}</span>)}
         </div>
@@ -146,7 +149,7 @@ export default async function ProjectDetail({
       {/* Key Learnings / Results */}
       {p.resultsOrLearnings && p.resultsOrLearnings.length > 0 && (
         <section className="detail__section">
-          <h2>Insights &amp; Observations</h2>
+          <h2><Localized en="Insights & Observations" vi="Nhận xét & quan sát" /></h2>
           <ul className="bullet-list">
             {p.resultsOrLearnings.map((res) => (
               <li key={res}>{res}</li>
@@ -157,14 +160,14 @@ export default async function ProjectDetail({
 
       {p.disclosureNote && (
         <section className="detail__section detail__disclosure-box">
-          <h2>Disclosure &amp; Project Status</h2>
-          <p className="meta">{p.disclosureNote}</p>
+          <h2><Localized en="Disclosure & Project Status" vi="Mức công bố & trạng thái project" /></h2>
+          <p className="meta"><Localized en={p.disclosureNote} vi={viCopy?.disclosureNote ?? p.disclosureNote} /></p>
         </section>
       )}
 
       {p.links && Object.keys(p.links).length > 0 && (
         <section className="detail__section">
-          <h2>Links</h2>
+          <h2><Localized en="Links" vi="Liên kết" /></h2>
           <div className="link-row">
             {Object.entries(p.links).map(([kind, url]) => (
               <a key={kind} className="action-button" href={url} target="_blank" rel="noreferrer">
@@ -177,13 +180,13 @@ export default async function ProjectDetail({
 
       {related.length > 0 && (
         <section className="detail__section detail__related">
-          <h2>Related projects</h2>
+          <h2><Localized en="Related projects" vi="Project liên quan" /></h2>
           <div className="related-grid">
             {related.map((x) => (
               <Link key={x.slug} href={`/projects/${x.slug}`} className="related-card">
                 <span className="eyebrow">{x.kind.toUpperCase()}</span>
                 <h3>{x.title}</h3>
-                <p>{x.summary}</p>
+                <p><Localized en={x.summary} vi={projectVi[x.slug]?.summary ?? x.summary} /></p>
               </Link>
             ))}
           </div>
@@ -191,7 +194,7 @@ export default async function ProjectDetail({
       )}
 
       <div className="detail__footer-nav">
-        <Link className="text-link" href="/projects">← Back to all projects</Link>
+        <Link className="text-link" href="/projects">← <Localized en="Back to all projects" vi="Quay lại tất cả project" /></Link>
       </div>
     </article>
   )

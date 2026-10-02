@@ -3,10 +3,18 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import ThemeToggle from '@/components/theme/ThemeToggle'
+import LanguageToggle from '@/components/language/LanguageToggle'
+import { useLanguage } from '@/components/language/LanguageProvider'
 
-const links = [['/', 'HOME'], ['/projects', 'PROJECTS'], ['/research', 'RESEARCH'], ['/about', 'ABOUT']]
+const links = [
+  ['/', 'HOME', 'TRANG CHỦ'],
+  ['/projects', 'PROJECTS', 'DỰ ÁN'],
+  ['/research', 'RESEARCH', 'NGHIÊN CỨU'],
+  ['/about', 'ABOUT', 'GIỚI THIỆU'],
+]
 
 export default function Header() {
+  const { language } = useLanguage()
   const path = usePathname().replace(/\/$/, '') || '/'
   const headerRef = useRef<HTMLElement>(null)
   const [cinematic, setCinematic] = useState(false)
@@ -52,9 +60,9 @@ export default function Header() {
   const active = (href: string) => href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`)
   const navigation = (mobile = false) => (
     <nav aria-label="Primary navigation" className={mobile ? 'home-mobile-nav' : 'home-desktop-nav'}>
-      {links.map(([href, label]) => <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined} className={`label-mono home-nav-link ${active(href) ? 'home-nav-active' : ''}`}>{label}</Link>)}
+      {links.map(([href, en, vi]) => <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined} className={`label-mono home-nav-link ${active(href) ? 'home-nav-active' : ''}`}>{language === 'vi' ? vi : en}</Link>)}
     </nav>
   )
-  return <header ref={headerRef} className={`site-header ${cinematicActive ? 'site-header--cinematic' : ''}`} data-visual-context={cinematicActive ? 'cinematic' : 'page'}><div className="site-header-inner"><Link href="/" className="site-brand"><span className="site-mark">HN</span><span><strong>Hoang Anh Nguyen</strong><small>Electronics &amp; Telecom Eng.</small></span></Link><div className="site-header-tools">{navigation()}<ThemeToggle /></div></div>{navigation(true)}</header>
+  return <header ref={headerRef} className={`site-header ${cinematicActive ? 'site-header--cinematic' : ''}`} data-visual-context={cinematicActive ? 'cinematic' : 'page'}><div className="site-header-inner"><Link href="/" className="site-brand"><span className="site-mark">HN</span><span><strong>Hoang Anh Nguyen</strong><small>{language === 'vi' ? 'Kỹ thuật Điện tử & Viễn thông' : 'Electronics & Telecom Eng.'}</small></span></Link><div className="site-header-tools">{navigation()}<LanguageToggle/><ThemeToggle /></div></div>{navigation(true)}</header>
 }
 
