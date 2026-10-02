@@ -4,7 +4,6 @@ import { publishedProjects } from '@/lib/projects'
 import EditorialHero from '@/components/home/EditorialHero'
 import FeaturedWork from '@/components/home/FeaturedWork'
 import CinematicPath from '@/components/home/CinematicPath.client'
-import LovableSystemMap from '@/components/system-map/LovableSystemMap'
 import Localized from '@/components/language/Localized'
 
 export const metadata = { alternates: { canonical: siteUrl ? `${siteUrl}/` : undefined } }
@@ -25,23 +24,15 @@ export default function Home() {
         <p><Localized en="I am learning by moving across layers: understanding how systems communicate, how models handle signals, and how computation reaches constrained hardware." vi="Tôi học bằng cách đi xuyên qua các lớp của hệ thống: hiểu cách systems giao tiếp, cách models xử lý signals và cách computation đi tới constrained hardware." /></p>
       </section>
       <CinematicPath />
-      <section className="home-map-section" aria-labelledby="domains-title">
-        <div className="home-section-heading">
-          <p className="home-eyebrow"><Localized en="04 / Secondary constellation" vi="04 / Constellation mở rộng" /></p>
-          <h2 id="domains-title"><Localized en="Explore the domains" vi="Khám phá các hướng kỹ thuật" /></h2>
-          <p><Localized en="Current work and future directions, connected through projects, research, and learning paths." vi="Các công việc hiện tại và hướng phát triển tiếp theo, được nối với nhau qua projects, research và learning paths." /></p>
-        </div>
-        <LovableSystemMap />
-      </section>
       <section className="home-lower-grid">
         <div>
-          <p className="home-eyebrow"><Localized en="05 / Research note" vi="05 / Ghi chú research" /></p>
+          <p className="home-eyebrow"><Localized en="04 / Research note" vi="04 / Ghi chú research" /></p>
           <h2><Localized en="Speech separation remains an open working question." vi="Speech separation vẫn là một câu hỏi research đang tiếp tục được giải quyết." /></h2>
           <p><Localized en="SPMamba and MossFormer 2 are documented as research summaries. No public paper, code, metrics, or empirical results are claimed here." vi="SPMamba và MossFormer 2 được ghi lại dưới dạng research summaries. Phần này không tuyên bố có public paper, code, metrics hay empirical results." /></p>
           <Link className="text-link" href="/research"><Localized en="Read research notes" vi="Đọc ghi chú research" /></Link>
         </div>
         <div>
-          <p className="home-eyebrow"><Localized en="06 / Direction" vi="06 / Định hướng" /></p>
+          <p className="home-eyebrow"><Localized en="05 / Direction" vi="05 / Định hướng" /></p>
           <dl className="direction-list">
             <div><dt><Localized en="Current" vi="Hiện tại" /></dt><dd>Systems, Edge AI, research, electronics</dd></div>
             <div><dt><Localized en="Exploring" vi="Đang khám phá" /></dt><dd>Signal processing and embedded systems</dd></div>

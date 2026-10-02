@@ -35,13 +35,13 @@ test.describe('published navigation', () => {
     await expect(page.getByRole('link', { name: /return home/i })).toHaveAttribute('href', '/')
   })
 
-  test('static system map exposes seven decorative SVGs, connectors, and real links', async ({ page }) => {
+  test('homepage uses one cinematic domain navigator without the duplicate system map', async ({ page }) => {
     await page.goto('/')
-    const map = page.getByRole('region', { name: 'System map' })
-    await expect(map.locator('svg[aria-hidden="true"]')).toHaveCount(8)
-    await expect(map.locator('svg').first().locator('line')).toHaveCount(6)
-    await expect(map.getByRole('link', { name: /SPMamba|MossFormer|Cisco Networking|Edge AI Stethoscope|Face Recognition|Signal Processing|Embedded Systems|GPS \/ GNSS|Sensor fusion|Waypoint|RTK|FPGA|PCB|RF \/ Antenna|IC Design/ }).first()).toBeVisible()
-    await expect(map.locator('canvas')).toHaveCount(0)
+    await expect(page.locator('.cinematic-path')).toBeVisible()
+    await expect(page.getByRole('region', { name: 'System map' })).toHaveCount(0)
+    await expect(page.locator('.cinematic-hud li')).toHaveCount(5)
+    await expect(page.locator('.cinematic-hud').getByRole('link', { name: 'UAV Navigation', exact: true })).toBeVisible()
+    await expect(page.locator('canvas')).toHaveCount(0)
   })
 
   test('domain filters update URL, visible results, and browser history', async ({ page }) => {
@@ -127,14 +127,15 @@ test.describe('progressive enhancement', () => {
     await context.close()
   })
 
-  test('reduced motion keeps static map usable', async ({ page }) => {
+  test('reduced motion keeps the cinematic path usable as a static navigator', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
-    await expect(page.getByRole('region', { name: 'System map' })).toBeVisible()
+    await expect(page.locator('.cinematic-path')).toHaveAttribute('data-enhanced', 'false')
+    await expect(page.locator('.cinematic-hud').getByRole('link', { name: 'Systems', exact: true })).toBeVisible()
     await expect(page.locator('canvas')).toHaveCount(0)
   })
 
-  test('static map makes no WebGL calls or scene requests', async ({ page }) => {
+  test('cinematic path makes no WebGL calls or scene requests', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.addInitScript(() => {
       const original = HTMLCanvasElement.prototype.getContext

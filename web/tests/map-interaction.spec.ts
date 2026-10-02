@@ -1,67 +1,69 @@
 import { test, expect } from '@playwright/test'
 
-test.describe('system map interaction', () => {
-  test('graphic and heading links expose distinct destinations', async ({ page }) => {
+test.describe('cinematic path interaction', () => {
+  test('path exposes the engineering destinations once', async ({ page }) => {
     await page.goto('/')
-    const map = page.getByRole('region', { name: 'System map' })
-    for (const node of ['research', 'systems', 'edge-ai', 'electronics', 'uav-nav', 'ic-design']) {
-      await expect(map.locator(`[data-map-graphic="${node}"]`)).toHaveAttribute('href', /./)
-      await expect(map.locator(`[data-map-node="${node}"] h3 a`).filter({visible:true})).toHaveAttribute('href', /./)
+    const path = page.locator('.cinematic-path')
+    await expect(path).toBeVisible()
+    await expect(page.getByRole('region', { name: 'System map' })).toHaveCount(0)
+
+    const destinations = [
+      ['Systems', /\/projects\/?\?domain=systems$/],
+      ['Edge AI', /\/projects\/?\?domain=edge-ai$/],
+      ['Electronics', /\/projects\/?\?domain=electronics$/],
+      ['UAV Navigation', /\/about\/?#uav-navigation$/],
+      ['IC Design', /\/about\/?#future-directions$/],
+    ] as const
+
+    for (const [label, href] of destinations) {
+      await expect(path.locator('.cinematic-hud').getByRole('link', { name: label, exact: true })).toHaveAttribute('href', href)
     }
-    await expect(map.locator('[data-map-graphic="systems"]')).toHaveAttribute('href', /\/projects\/?\?domain=systems$/)
-    await expect(map.locator('[data-map-graphic="edge-ai"]')).toHaveAttribute('href', /\/projects\/?\?domain=edge-ai$/)
-    await expect(map.locator('a a')).toHaveCount(0)
   })
 
-  test('pointer tilt changes and resets', async ({ page }) => {
+  test('scrolling advances the cinematic path smoothly', async ({ page }) => {
     await page.goto('/')
-    const graphic = page.locator('[data-map-graphic="research"]')
-    await graphic.hover({ position: { x: 20, y: 20 } })
-    await expect.poll(() => graphic.evaluate(el => el.style.getPropertyValue('--map-rotate-x'))).not.toBe('')
-    await expect.poll(() => graphic.evaluate(el => getComputedStyle(el).transform)).not.toBe('none')
-    await page.mouse.move(1, 1)
-    await expect.poll(() => graphic.evaluate(el => getComputedStyle(el).transform)).toBe('none')
+    const path = page.locator('.cinematic-path')
+    const metrics = await path.evaluate((element) => ({
+      top: (element as HTMLElement).offsetTop,
+      height: (element as HTMLElement).offsetHeight,
+      viewport: window.innerHeight,
+    }))
+
+    await page.evaluate(({ top, height, viewport }) => {
+      window.scrollTo(0, top + (height - viewport) * 0.55)
+    }, metrics)
+
+    await expect.poll(() => path.getAttribute('data-active')).not.toBe('0')
+    const current = path.locator('[data-journey-node][data-current]').first()
+    await expect(current).toHaveCount(1)
+    await expect.poll(() => current.evaluate((element) => getComputedStyle(element).transform)).not.toBe('none')
   })
 
-  test('entrance, LED, and connector animations are active', async ({ page }) => {
-    await page.goto('/')
-    await expect(page.locator('[data-map-node="research"] .map-node-motion')).toHaveCSS('animation-name', 'map-node-enter')
-    await expect(page.locator('[data-map-led]').first()).toHaveCSS('animation-name', 'map-led-pulse')
-    await page.locator('[data-map-graphic="research"]').hover()
-    const cable = page.locator('[data-map-cable="research"]')
-    await expect(cable).toHaveCSS('stroke-width', '2px')
-    await expect(cable).toHaveCSS('animation-name', 'map-cable-trace')
-  })
-
-  test('reduced motion disables transform', async ({ page }) => {
+  test('reduced motion keeps the static path usable', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
-    const graphic = page.locator('[data-map-graphic="research"]')
-    await graphic.hover()
-    await expect.poll(() => graphic.evaluate(el => getComputedStyle(el).transform)).toBe('none')
-    await expect(page.locator('[data-map-node="research"] .map-node-motion')).toHaveCSS('animation-name', 'none')
-    await expect(page.locator('[data-map-led]').first()).toHaveCSS('animation-name', 'none')
-    await expect(page.locator('[data-map-cable="research"]')).toHaveCSS('animation-name', 'none')
+    const path = page.locator('.cinematic-path')
+    await expect(path).toHaveAttribute('data-enhanced', 'false')
+    await expect(path.locator('.cinematic-hud').getByRole('link', { name: 'Systems', exact: true })).toBeVisible()
   })
 
-  test('keyboard focus and no JavaScript links work', async ({ page, browser }) => {
+  test('keyboard navigation reaches the path links', async ({ page }) => {
     await page.goto('/')
-    await page.locator('[data-map-graphic="identity"]').focus()
+    const systems = page.locator('.cinematic-hud').getByRole('link', { name: 'Systems', exact: true })
+    await systems.focus()
+    await expect(systems).toBeFocused()
     await page.keyboard.press('Enter')
-    await expect(page).toHaveURL(/\/about\/?$/)
-    const context = await browser.newContext({ javaScriptEnabled: false })
-    const noJs = await context.newPage()
-    await noJs.goto('/')
-    await expect(noJs.locator('[data-map-graphic="research"]')).toHaveAttribute('href', '/research')
-    await noJs.locator('[data-map-graphic="research"]').click({ force: true })
-    await expect(noJs).toHaveURL(/\/research\/?$/)
-    await context.close()
+    await expect(page).toHaveURL(/\/projects\/?\?domain=systems$/)
   })
 
-  test('clicking a domain graphic opens its filtered project index', async ({ page }) => {
+  test('path links remain available without JavaScript', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false })
+    const page = await context.newPage()
     await page.goto('/')
-    await page.locator('[data-map-graphic="systems"]').click()
+    const systems = page.locator('.cinematic-hud').getByRole('link', { name: 'Systems', exact: true })
+    await expect(systems).toBeVisible()
+    await systems.click()
     await expect(page).toHaveURL(/\/projects\/?\?domain=systems$/)
-    await expect(page.locator('nav[aria-label="Filter projects"] a[aria-current="page"]')).toHaveText('Systems')
+    await context.close()
   })
 })
