@@ -12,7 +12,9 @@ const waypoints = [
   { title: 'IC Design', code: 'IC-05', href: '/about#future-directions', note: 'A longer-term descent toward deeper hardware, digital logic, RF, and silicon-level thinking.', noteVi: 'Hướng dài hạn đi sâu hơn vào hardware, digital logic, RF và tư duy ở silicon level.' },
 ] as const
 
-const xOffsets = [-17, 14, -10, 16, 0]
+const xOffsets = [-14, 11, -9, 13, 0]
+
+const clamp = (value: number) => Math.max(0, Math.min(1, value))
 
 export default function CinematicPath() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -24,114 +26,152 @@ export default function CinematicPath() {
     const section = sectionRef.current
     if (!section) return
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const smallScreen = window.matchMedia('(max-width: 767px)')
-    let frame = 0
-    let desiredPosition = 0
-    let smoothPosition = 0
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const compact = window.matchMedia('(max-width: 767px)')
+    let raf = 0
     let lastActive = -1
+    let animations: Animation[] = []
 
-    const readTarget = () => {
-      const rect = section.getBoundingClientRect()
-      const travel = Math.max(1, section.offsetHeight - window.innerHeight)
-      const progress = Math.min(1, Math.max(0, -rect.top / travel))
-      desiredPosition = progress * (waypoints.length - 1)
+    const stopAnimations = () => {
+      animations.forEach((animation) => animation.cancel())
+      animations = []
     }
 
-    const paint = () => {
-      frame = 0
-      const motionEnabled = !reduceMotion.matches && !smallScreen.matches
-      section.dataset.enhanced = motionEnabled ? 'true' : 'false'
-      if (!motionEnabled) return
+    const setup = () => {
+      stopAnimations()
+      const enabled = !reduced.matches && !compact.matches
+      section.dataset.enhanced = enabled ? 'true' : 'false'
+      if (!enabled) return
 
-      const delta = desiredPosition - smoothPosition
-      smoothPosition += delta * 0.075
-      if (Math.abs(delta) < 0.0008) smoothPosition = desiredPosition
+      const nodes = Array.from(section.querySelectorAll<HTMLElement>('[data-journey-node]'))
+      animations = nodes.map((node, index) => {
+        const x = xOffsets[index]
+        const animation = node.animate([
+          {
+            offset: 0,
+            transform: `translate3d(${x * 1.65}vw, 220px, -1180px) rotateX(5deg) rotateY(${-x * 0.48}deg) scale(.54)`,
+            opacity: 0.03,
+          },
+          {
+            offset: 0.34,
+            transform: `translate3d(${x * 0.72}vw, 84px, -520px) rotateX(2deg) rotateY(${-x * 0.24}deg) scale(.78)`,
+            opacity: 0.34,
+          },
+          {
+            offset: 0.5,
+            transform: 'translate3d(0, 0, 90px) rotateX(0deg) rotateY(0deg) scale(1)',
+            opacity: 1,
+          },
+          {
+            offset: 0.6,
+            transform: `translate3d(${-x * 0.16}vw, -38px, 180px) rotateX(-1.5deg) rotateY(${x * 0.08}deg) scale(1.02)`,
+            opacity: 0.22,
+          },
+          {
+            offset: 0.7,
+            transform: `translate3d(${-x * 0.28}vw, -86px, 300px) rotateX(-3deg) rotateY(${x * 0.13}deg) scale(1.04)`,
+            opacity: 0,
+          },
+          {
+            offset: 1,
+            transform: `translate3d(${-x * 0.42}vw, -160px, 430px) rotateX(-5deg) rotateY(${x * 0.18}deg) scale(1.06)`,
+            opacity: 0,
+          },
+        ], { duration: 1000, fill: 'both', easing: 'linear' })
+        animation.pause()
+        return animation
+      })
+    }
 
-      const progress = smoothPosition / (waypoints.length - 1)
-      const nextActive = Math.min(waypoints.length - 1, Math.max(0, Math.round(smoothPosition)))
+    const update = () => {
+      raf = 0
+      if (section.dataset.enhanced !== 'true') return
+
+      const rect = section.getBoundingClientRect()
+      const travel = Math.max(1, section.offsetHeight - window.innerHeight)
+      const progress = clamp(-rect.top / travel)
+      const position = progress * (waypoints.length - 1)
+      const nextActive = Math.min(waypoints.length - 1, Math.max(0, Math.round(position)))
+
       section.style.setProperty('--journey-progress', progress.toFixed(4))
+
+      animations.forEach((animation, index) => {
+        const local = clamp(0.5 + (position - index) * 0.33)
+        animation.currentTime = local * 1000
+      })
+
+      section.querySelectorAll<HTMLElement>('[data-journey-node]').forEach((node, index) => {
+        node.toggleAttribute('data-current', index === nextActive)
+      })
 
       if (nextActive !== lastActive) {
         lastActive = nextActive
         section.dataset.active = String(nextActive)
         setActive(nextActive)
       }
-
-      section.querySelectorAll<HTMLElement>('[data-journey-node]').forEach((node, index) => {
-        const phase = index - smoothPosition
-        const absolute = Math.abs(phase)
-        const z = phase < 0 ? 130 + phase * 430 : 130 - phase * 340
-        const x = xOffsets[index] * (0.34 + Math.min(absolute, 1.35) * 0.34)
-        const y = phase * 142
-        const opacity = Math.max(0.12, 1 - absolute * 0.31)
-        const blur = Math.max(0, absolute - 1.3) * 0.85
-        const scale = Math.max(0.72, 1 - absolute * 0.055)
-
-        node.style.transform = `translate3d(${x}vw, ${y}px, ${z}px) rotateX(${(-phase * 2.6).toFixed(2)}deg) rotateY(${(x * -0.1).toFixed(2)}deg) scale(${scale.toFixed(3)})`
-        node.style.opacity = opacity.toFixed(3)
-        node.style.filter = `blur(${blur.toFixed(2)}px)`
-        node.style.zIndex = String(100 - Math.round(absolute * 8))
-        node.toggleAttribute('data-current', index === nextActive)
-      })
-
-      const near = section.querySelector<HTMLElement>('[data-star-layer="near"]')
-      const far = section.querySelector<HTMLElement>('[data-star-layer="far"]')
-      if (near) near.style.transform = `translate3d(0,${(-progress * 105).toFixed(1)}px,90px) scale(${(1 + progress * 0.08).toFixed(3)})`
-      if (far) far.style.transform = `translate3d(0,${(-progress * 42).toFixed(1)}px,-130px) scale(${(1 + progress * 0.035).toFixed(3)})`
-
-      if (Math.abs(desiredPosition - smoothPosition) > 0.0008) frame = requestAnimationFrame(paint)
     }
 
     const schedule = () => {
-      readTarget()
-      if (!frame) frame = requestAnimationFrame(paint)
+      if (!raf) raf = requestAnimationFrame(update)
     }
 
-    readTarget()
-    smoothPosition = desiredPosition
-    paint()
+    const reconfigure = () => {
+      setup()
+      schedule()
+    }
+
+    setup()
+    update()
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', schedule)
-    reduceMotion.addEventListener('change', schedule)
-    smallScreen.addEventListener('change', schedule)
+    reduced.addEventListener('change', reconfigure)
+    compact.addEventListener('change', reconfigure)
 
     return () => {
-      if (frame) cancelAnimationFrame(frame)
+      if (raf) cancelAnimationFrame(raf)
+      stopAnimations()
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
-      reduceMotion.removeEventListener('change', schedule)
-      smallScreen.removeEventListener('change', schedule)
+      reduced.removeEventListener('change', reconfigure)
+      compact.removeEventListener('change', reconfigure)
     }
   }, [])
 
   return (
-    <section ref={sectionRef} className="cinematic-path" aria-labelledby="journey-title" data-active="0" data-enhanced="false">
+    <section ref={sectionRef} className="cinematic-path cinematic-path--v2" aria-labelledby="journey-title" data-active="0" data-enhanced="false">
       <div className="cinematic-path__sticky">
         <header className="cinematic-path__heading">
           <p className="home-eyebrow">03 / {vi ? 'Hành trình chiều sâu' : 'Deep path'}</p>
           <div>
             <h2 id="journey-title">{vi ? 'Đi xuyên qua stack.' : 'Through the stack.'}</h2>
-            <p>{vi ? 'Scroll để đi qua những systems đang định hình hành trình kỹ thuật hiện tại.' : 'Scroll forward through the systems that currently shape the engineering path.'}</p>
+            <p>{vi ? 'Scroll để camera đi qua từng layer — từ Systems tới IC Design.' : 'Scroll the camera through each layer — from Systems toward IC Design.'}</p>
           </div>
         </header>
 
         <div className="cinematic-path__stage">
-          <div className="cinematic-stars cinematic-stars--far" data-star-layer="far" aria-hidden="true" />
-          <div className="cinematic-stars cinematic-stars--near" data-star-layer="near" aria-hidden="true" />
-          <div className="cinematic-orbit cinematic-orbit--a" aria-hidden="true" />
-          <div className="cinematic-orbit cinematic-orbit--b" aria-hidden="true" />
-          <div className="cinematic-axis" aria-hidden="true"><span /></div>
+          <div className="cinematic-depth-bg" aria-hidden="true" />
+          <div className="cinematic-tunnel" aria-hidden="true">
+            <i className="cinematic-frame cinematic-frame--1" />
+            <i className="cinematic-frame cinematic-frame--2" />
+            <i className="cinematic-frame cinematic-frame--3" />
+            <i className="cinematic-frame cinematic-frame--4" />
+            <i className="cinematic-frame cinematic-frame--5" />
+            <span className="cinematic-vanishing-point" />
+          </div>
+          <div className="cinematic-rail cinematic-rail--left" aria-hidden="true" />
+          <div className="cinematic-rail cinematic-rail--right" aria-hidden="true" />
 
           <div className="cinematic-path__nodes">
             {waypoints.map((waypoint, index) => (
-              <Link key={waypoint.title} href={waypoint.href} className="cinematic-node" data-journey-node data-step={index} aria-hidden="true" tabIndex={-1}>
-                <span className="cinematic-node__code">{waypoint.code}</span>
-                <span className="cinematic-node__index">{String(index + 1).padStart(2, '0')}</span>
-                <strong>{waypoint.title}</strong>
-                <p>{vi ? waypoint.noteVi : waypoint.note}</p>
-                <span className="cinematic-node__link">{vi ? 'Mở node' : 'Explore node'} <b aria-hidden="true">↗</b></span>
-              </Link>
+              <div className="cinematic-node-anchor" key={waypoint.title}>
+                <Link href={waypoint.href} className="cinematic-node" data-journey-node data-step={index} aria-hidden="true" tabIndex={-1}>
+                  <span className="cinematic-node__code">{waypoint.code}</span>
+                  <span className="cinematic-node__index">{String(index + 1).padStart(2, '0')}</span>
+                  <strong>{waypoint.title}</strong>
+                  <p>{vi ? waypoint.noteVi : waypoint.note}</p>
+                  <span className="cinematic-node__link">{vi ? 'Mở node' : 'Explore node'} <b aria-hidden="true">↗</b></span>
+                </Link>
+              </div>
             ))}
           </div>
 
