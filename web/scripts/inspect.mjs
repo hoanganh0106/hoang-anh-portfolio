@@ -1,0 +1,14 @@
+import { chromium } from '@playwright/test';
+import { mkdir } from 'node:fs/promises';
+const output = new URL('../../.artifacts/qa/', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
+await mkdir(output, { recursive: true });
+const browser = await chromium.launch({ channel: 'msedge' });
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const errors = [];
+page.on('pageerror', e => errors.push(e.message));
+await page.goto(process.env.QA_URL || 'http://127.0.0.1:3001', { waitUntil: 'networkidle' });
+await page.screenshot({ path: `${output}/desktop-light.png`, fullPage: true });
+await page.locator('.system-map').scrollIntoViewIfNeeded();
+await page.screenshot({ path: `${output}/map-light.png` });
+console.log(JSON.stringify({ title: await page.title(), errors, metrics: await page.locator('.system-map').evaluate(e => ({ ...e.dataset })), bodyWidth: await page.evaluate(() => document.body.scrollWidth) }));
+await browser.close();

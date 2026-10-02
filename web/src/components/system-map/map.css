@@ -1,0 +1,366 @@
+/* ==========================================================================
+   System Map — Technical Node-Map Composition
+   ========================================================================== */
+
+.system-map {
+  position: relative;
+  padding: clamp(1.5rem, 4vw, 3rem) 0;
+  overflow: hidden;
+}
+
+/* ---------- Visual Container ---------- */
+
+.system-map__visual {
+  position: relative;
+  height: clamp(32rem, 52vw, 44rem);
+  border-radius: var(--radius-md);
+}
+
+.system-map__poster,
+.system-map__scene {
+  position: absolute;
+  inset: 0;
+}
+
+.system-map__poster {
+  z-index: 4;
+}
+
+.system-map__scene {
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease;
+}
+
+.system-map[data-scene-failed="true"] .system-map__scene {
+  display: none;
+}
+
+.system-map[data-scene-ready="true"] .system-map__scene {
+  opacity: 0.9;
+}
+
+.system-map__visual[data-enhanced="true"] .system-map__poster {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   SVG Circuit Traces — Thin Technical Connections
+   ========================================================================== */
+
+.system-map__circuit {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  overflow: visible;
+}
+
+.circuit-trace {
+  transition: opacity 200ms ease;
+}
+
+/* ==========================================================================
+   HTML Label Layer — Lightweight Technical Annotations
+   ========================================================================== */
+
+.system-map__labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ---------- Node Anchor (positioning wrapper) ---------- */
+
+.node-anchor {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: auto;
+  z-index: 5;
+  transition: opacity 220ms ease;
+}
+
+.node-anchor.is-dimmed {
+  opacity: 0.38;
+}
+
+.node-anchor--identity {
+  z-index: 10;
+}
+
+/* ---------- Label Core ---------- */
+
+.node-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.4rem 0.65rem;
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--surface-raised) 92%, transparent);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.node-label:hover,
+.node-label:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.node-anchor.is-active .node-label {
+  border-color: var(--accent);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Kicker (DOMAIN 01, NEXT DIRECTION, etc) */
+.node-label__kicker {
+  font: 600 0.58rem/1.2 var(--font-mono, monospace);
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Title */
+.node-label__title {
+  font-size: 0.88rem;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+
+/* Note (identity subtitle) */
+.node-label__note {
+  font: 0.68rem var(--font-mono, monospace);
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Identity Label (Larger, Stronger) ---------- */
+
+.node-label--identity {
+  min-width: 13rem;
+  padding: 0.65rem 1rem;
+  border-color: var(--border-strong);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.node-label--identity .node-label__kicker {
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  font-weight: 700;
+}
+
+.node-label--identity .node-label__title {
+  font-size: 1.05rem;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+
+.node-label--identity:hover,
+.node-label--identity:focus-visible {
+  border-color: var(--text);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* ---------- Direction State (IC Design — dashed, lighter) ---------- */
+
+.node-label[data-state="direction"] {
+  border-style: dashed;
+  border-color: var(--border-strong);
+  background: color-mix(in srgb, var(--surface-raised) 75%, transparent);
+}
+
+.node-label[data-state="direction"] .node-label__kicker {
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   Inline Project Lists — Clean Vertical Subordinate
+   ========================================================================== */
+
+.node-projects {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  align-items: center;
+}
+
+.node-projects__link {
+  display: inline-block;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 0.12rem 0.4rem;
+  border-radius: 2px;
+  transition: color 160ms ease;
+  white-space: nowrap;
+}
+
+.node-projects__link::before {
+  content: '·  ';
+  color: var(--accent);
+  opacity: 0.5;
+}
+
+.node-projects__link:hover,
+.node-projects__link:focus-visible {
+  color: var(--text);
+}
+
+.node-projects__link--next,
+.node-projects__link--future {
+  font-size: 0.64rem;
+  color: var(--text-subtle);
+}
+
+/* ==========================================================================
+   Mobile Technical Index (Vertical Hierarchy)
+   ========================================================================== */
+
+.system-map__index {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .system-map {
+    min-height: auto;
+  }
+
+  .system-map__visual {
+    height: 0;
+    margin-top: 0;
+    overflow: visible;
+  }
+
+  .system-map__poster {
+    display: none;
+  }
+
+  .system-map__index {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  .system-map__index-item {
+    border-bottom: 1px solid var(--border);
+    padding-block: 0.75rem;
+  }
+
+  .system-map__index-link {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 160ms, padding-left 160ms;
+  }
+
+  .system-map__index-link--identity {
+    font-weight: 600;
+  }
+
+  .system-map__index-link:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .system-map__index-link:hover,
+  .system-map__index-link.is-active {
+    color: var(--accent);
+    padding-left: 0.4rem;
+  }
+
+  .system-map__index-number {
+    font: 700 0.68rem var(--font-mono, monospace);
+    color: var(--accent);
+    letter-spacing: 0.06em;
+  }
+
+  .system-map__index-title {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+  }
+
+  .identity-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: normal;
+  }
+
+  .direction-badge {
+    margin-left: auto;
+    font: 600 0.65rem var(--font-mono, monospace);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 0.15rem 0.4rem;
+    border: 1px dashed var(--border-strong);
+    border-radius: 2px;
+  }
+
+  .system-map__index-subprojects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding-left: 2rem;
+  }
+
+  .index-subproject-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .index-subproject-link:hover {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+
+  .subproject-dot {
+    color: var(--accent);
+    font-size: 0.75rem;
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .node-label,
+  .node-anchor,
+  .circuit-trace,
+  .node-projects__link {
+    transition: none !important;
+  }
+}

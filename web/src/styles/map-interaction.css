@@ -1,0 +1,107 @@
+.map-module-graphic {
+  --map-rotate-x: 0deg;
+  --map-rotate-y: 0deg;
+  display: block;
+  min-width: 150px;
+  min-height: 44px;
+  perspective: 700px;
+  transform: none;
+  transform-origin: center;
+  transition: transform 160ms ease, filter 160ms ease;
+  filter: drop-shadow(0 7px 5px color-mix(in srgb, var(--iso-shadow) 70%, transparent));
+  transform-style: preserve-3d;
+}
+
+.map-node-motion {
+  animation: map-node-enter 680ms cubic-bezier(.22, .8, .3, 1) both;
+  animation-delay: calc(var(--map-index, 0) * 90ms);
+}
+
+.map-module-graphic:hover,
+.map-module-graphic:focus-visible {
+  transform: perspective(700px) rotateX(var(--map-rotate-x)) rotateY(var(--map-rotate-y)) translateY(-7px) translateZ(12px);
+  filter: drop-shadow(0 16px 10px color-mix(in srgb, var(--iso-shadow) 95%, transparent));
+}
+
+.map-module-graphic:active {
+  transform: perspective(700px) rotateX(var(--map-rotate-x)) rotateY(var(--map-rotate-y)) translateY(-3px) translateZ(5px) scale(.985);
+}
+
+.map-led {
+  animation: map-led-pulse 2.3s ease-in-out infinite;
+  animation-delay: calc(var(--map-led-index, 0) * -420ms);
+}
+
+[data-map-node] .map-module-graphic:hover ~ *,
+[data-map-node]:focus-within .map-module-graphic ~ *,
+[data-map-node]:has(.map-module-graphic:hover) {
+  --iso-cable: var(--accent);
+}
+
+.map-module-graphic svg {
+  display: block;
+  pointer-events: none;
+}
+
+.map-node-title {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+}
+
+@keyframes map-node-enter {
+  from { opacity: 0; translate: 0 16px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes map-led-pulse {
+  0%, 100% { opacity: .42; }
+  50% { opacity: 1; }
+}
+
+@keyframes map-cable-trace {
+  from { stroke-dashoffset: 34; }
+  to { stroke-dashoffset: 0; }
+}
+
+@media (pointer: coarse), (max-width: 767px) {
+  .map-module-graphic {
+    transform: none;
+    transition: filter 160ms ease;
+  }
+
+  .map-module-graphic:hover,
+  .map-module-graphic:focus-visible {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-module-graphic,
+  .map-module-graphic:hover,
+  .map-module-graphic:focus-visible,
+  .map-module-graphic:active {
+    transform: none;
+    transition: none;
+  }
+
+  .map-node-motion,
+  .map-led,
+  .map-interactive [data-map-cable] {
+    animation: none !important;
+  }
+}
+
+@media(max-width:767px){.map-node-title{min-height:44px}}
+.map-interactive:has([data-map-node="research"]:hover) [data-map-cable="research"],.map-interactive:has([data-map-node="research"]:focus-within) [data-map-cable="research"],
+.map-interactive:has([data-map-node="systems"]:hover) [data-map-cable="systems"],.map-interactive:has([data-map-node="systems"]:focus-within) [data-map-cable="systems"],
+.map-interactive:has([data-map-node="edge-ai"]:hover) [data-map-cable="edge-ai"],.map-interactive:has([data-map-node="edge-ai"]:focus-within) [data-map-cable="edge-ai"],
+.map-interactive:has([data-map-node="electronics"]:hover) [data-map-cable="electronics"],.map-interactive:has([data-map-node="electronics"]:focus-within) [data-map-cable="electronics"],
+.map-interactive:has([data-map-node="uav-nav"]:hover) [data-map-cable="uav-nav"],.map-interactive:has([data-map-node="uav-nav"]:focus-within) [data-map-cable="uav-nav"],
+.map-interactive:has([data-map-node="ic-design"]:hover) [data-map-cable="ic-design"],.map-interactive:has([data-map-node="ic-design"]:focus-within) [data-map-cable="ic-design"] {
+  stroke: var(--accent);
+  stroke-width: 2;
+  opacity: 1;
+  stroke-dasharray: 10 7;
+  animation: map-cable-trace 700ms linear infinite;
+}

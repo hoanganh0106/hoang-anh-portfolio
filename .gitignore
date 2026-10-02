@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+dist/
+.env*
+!.env.example
+*.tsbuildinfo
+playwright-report/
+test-results/
+.codegraph/
+.codebase-memory/
+.artifacts/
+*.blend
+*.blend1
+*.tar.gz
