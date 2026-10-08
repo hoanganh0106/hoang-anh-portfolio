@@ -13,15 +13,15 @@ type PageShellProps = {
 
 export function PageShell({ index, title, intro, indexVi, titleVi, introVi, children }: PageShellProps) {
   return (
-    <section className="page-shell">
+    <section className="page-shell" aria-labelledby="page-title" aria-describedby="page-intro">
       <header className="page-shell__header">
         <div className="page-shell__identity">
           <p className="label-mono"><Localized en={index} vi={indexVi ?? index} /></p>
-          <h1><Localized en={title} vi={titleVi ?? title} /></h1>
+          <h1 id="page-title"><Localized en={title} vi={titleVi ?? title} /></h1>
         </div>
         <div className="page-shell__intro-wrap">
           <span className="page-shell__rule" aria-hidden="true" />
-          <p className="page-shell__intro"><Localized en={intro} vi={introVi ?? intro} /></p>
+          <p id="page-intro" className="page-shell__intro"><Localized en={intro} vi={introVi ?? intro} /></p>
         </div>
       </header>
       <div className="page-shell__content">{children}</div>

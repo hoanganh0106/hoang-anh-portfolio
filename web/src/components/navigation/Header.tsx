@@ -59,10 +59,10 @@ export default function Header() {
   const cinematicActive = path === '/' && cinematic
   const active = (href: string) => href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`)
   const navigation = (mobile = false) => (
-    <nav aria-label="Primary navigation" className={mobile ? 'home-mobile-nav' : 'home-desktop-nav'}>
+    <nav aria-label={mobile ? (language === 'vi' ? 'Điều hướng di động' : 'Mobile primary navigation') : 'Primary navigation'} className={mobile ? 'home-mobile-nav' : 'home-desktop-nav'}>
       {links.map(([href, en, vi]) => <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined} className={`label-mono home-nav-link ${active(href) ? 'home-nav-active' : ''}`}>{language === 'vi' ? vi : en}</Link>)}
     </nav>
   )
-  return <header ref={headerRef} className={`site-header ${cinematicActive ? 'site-header--cinematic' : ''}`} data-visual-context={cinematicActive ? 'cinematic' : 'page'}><div className="site-header-inner"><Link href="/" className="site-brand"><span className="site-mark">HN</span><span><strong>Hoang Anh Nguyen</strong><small>{language === 'vi' ? 'Kỹ thuật Điện tử & Viễn thông' : 'Electronics & Telecom Eng.'}</small></span></Link><div className="site-header-tools">{navigation()}<LanguageToggle/><ThemeToggle /></div></div>{navigation(true)}</header>
+  return <header ref={headerRef} className={`site-header ${cinematicActive ? 'site-header--cinematic' : ''}`} data-visual-context={cinematicActive ? 'cinematic' : 'page'}><div className="site-header-inner"><Link href="/" className="site-brand" aria-label={language === 'vi' ? 'Về trang chủ Hoàng Anh Nguyễn' : 'Hoang Anh Nguyen home'}><span className="site-mark" aria-hidden="true">HN</span><span><strong>Hoang Anh Nguyen</strong><small>{language === 'vi' ? 'Kỹ thuật Điện tử & Viễn thông' : 'Electronics & Telecom Eng.'}</small></span></Link><div className="site-header-tools" role="group" aria-label={language === 'vi' ? 'Điều khiển trang' : 'Site controls'}>{navigation()}<LanguageToggle/><ThemeToggle /></div></div>{navigation(true)}</header>
 }
 

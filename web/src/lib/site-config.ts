@@ -13,5 +13,5 @@ function getSiteUrl(value: string | undefined) {
   }
 }
 
-export const siteConfig = { name:'Hoang Anh Nguyen', shortName:'HN', title:'Hoang Anh Nguyen — Technical Portfolio', description:'Exploring systems, intelligence, and hardware.', tagline:'Exploring systems, intelligence, and hardware.', role:'Electronics & Telecommunications Engineering', institution:'Hanoi University of Science and Technology', year:'Year 3', email:'', linkedin:'', github:'https://github.com/hoanganh0106' }
+export const siteConfig = { name:'Hoang Anh Nguyen', shortName:'HN', title:'Hoang Anh Nguyen — Technical Portfolio', description:'Systems, edge AI, speech separation, and electronics — documented from software to physical hardware.', tagline:'Systems, edge AI, speech separation, and electronics — from software to physical hardware.', role:'Electronics & Telecommunications Engineering', institution:'Hanoi University of Science and Technology', year:'Year 3', email:'', linkedin:'', github:'https://github.com/hoanganh0106' }
 export const siteUrl = getSiteUrl(configuredSiteUrl)

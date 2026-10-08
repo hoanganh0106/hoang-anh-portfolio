@@ -6,7 +6,7 @@ import { siteConfig, siteUrl } from '@/lib/site-config'
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'The learning journey from systems toward IC design — Hoang Anh Nguyen.',
+  description: 'A learning journey from Linux and systems through edge AI and electronics toward IC design — Hoang Anh Nguyen.',
   alternates: { canonical: siteUrl ? `${siteUrl}/about/` : undefined },
 }
 

@@ -9,6 +9,17 @@ import { projectVi } from '@/lib/project-i18n'
 
 export const dynamicParams = false
 
+function statusCopy(status: string, language: 'en' | 'vi') {
+  if (language === 'vi') {
+    if (status === 'in-progress') return 'Đang thực hiện'
+    if (status === 'completed') return 'Hoàn thành'
+    return 'Tạm dừng'
+  }
+  if (status === 'in-progress') return 'In progress'
+  if (status === 'completed') return 'Completed'
+  return 'Paused'
+}
+
 export function generateStaticParams() {
   return publishedProjects().map((p) => ({ slug: p.slug }))
 }
@@ -54,8 +65,8 @@ export default async function ProjectDetail({
       <header className="detail__header">
         <div className="badge-row">
           <span className="eyebrow">{p.kind.toUpperCase()}</span>
-          {p.status && <span className="status-pill">{p.status.toUpperCase()}</span>}
-          <span className="disclosure-pill">{p.disclosure === 'summary-only' ? 'SUMMARY DISCLOSURE' : 'PUBLIC REPO'}</span>
+          {p.status && <span className="status-pill"><Localized en={statusCopy(p.status, 'en').toUpperCase()} vi={statusCopy(p.status, 'vi').toUpperCase()} /></span>}
+          <span className="disclosure-pill"><Localized en={p.disclosure === 'summary-only' ? 'SUMMARY DISCLOSURE' : 'PUBLIC REPO'} vi={p.disclosure === 'summary-only' ? 'CHỈ CÔNG BỐ SUMMARY' : 'PUBLIC REPO'} /></span>
         </div>
         <h1 className="detail__title">{p.title}</h1>
         <p className="lede"><Localized en={p.summary} vi={viCopy?.summary ?? p.summary} /></p>

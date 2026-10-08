@@ -6,11 +6,23 @@ import type { DomainId, Project } from '@/lib/types'
 import { useLanguage } from '@/components/language/LanguageProvider'
 import { projectVi } from '@/lib/project-i18n'
 
+const domainLabelsVi: Partial<Record<DomainId, string>> = {
+  systems: 'Systems',
+  'edge-ai': 'Edge AI',
+  research: 'Research',
+  electronics: 'Electronics',
+  'ic-design': 'Thiết kế IC',
+}
+
+function domainLabel(id: DomainId, vi: boolean) {
+  return vi ? domainLabelsVi[id] ?? domains[id]?.label ?? id : domains[id]?.label ?? id
+}
+
 export function ProjectIndex({ items, selectedDomain }: { items: Project[]; selectedDomain?: string }) {
   const { language } = useLanguage()
   const vi = language === 'vi'
   const activeDomainLabel = selectedDomain && Object.prototype.hasOwnProperty.call(domains, selectedDomain)
-    ? domains[selectedDomain as DomainId]?.label
+    ? domainLabel(selectedDomain as DomainId, vi)
     : null
 
   return (
@@ -19,9 +31,9 @@ export function ProjectIndex({ items, selectedDomain }: { items: Project[]; sele
         <span className="label-mono mr-2">{vi ? 'Lọc' : 'Filter'}</span>
         <Link className={`label-mono border px-3 py-1 transition-colors ${!selectedDomain ? 'border-foreground bg-foreground text-background' : 'border-border text-muted-foreground hover:border-accent hover:text-accent'}`} href="/projects" aria-current={!selectedDomain ? 'page' : undefined}>{vi ? 'Tất cả' : 'All'}</Link>
         {Object.values(domains).filter((domain) => domain.state === 'current').map((domain) => (
-          <Link key={domain.id} className={`label-mono border px-3 py-1 transition-colors ${selectedDomain === domain.id ? 'border-foreground bg-foreground text-background' : 'border-border text-muted-foreground hover:border-accent hover:text-accent'}`} href={`/projects?domain=${domain.id}`} aria-current={selectedDomain === domain.id ? 'page' : undefined}>{domain.label}</Link>
+          <Link key={domain.id} className={`label-mono border px-3 py-1 transition-colors ${selectedDomain === domain.id ? 'border-foreground bg-foreground text-background' : 'border-border text-muted-foreground hover:border-accent hover:text-accent'}`} href={`/projects?domain=${domain.id}`} aria-current={selectedDomain === domain.id ? 'page' : undefined}>{domainLabel(domain.id, vi)}</Link>
         ))}
-        <Link className={`label-mono border px-3 py-1 transition-colors ${selectedDomain === 'ic-design' ? 'border-foreground bg-foreground text-background' : 'border-border text-muted-foreground hover:border-accent hover:text-accent'}`} href="/projects?domain=ic-design" aria-current={selectedDomain === 'ic-design' ? 'page' : undefined}>IC Design</Link>
+        <Link className={`label-mono border px-3 py-1 transition-colors ${selectedDomain === 'ic-design' ? 'border-foreground bg-foreground text-background' : 'border-border text-muted-foreground hover:border-accent hover:text-accent'}`} href="/projects?domain=ic-design" aria-current={selectedDomain === 'ic-design' ? 'page' : undefined}>{domainLabel('ic-design', vi)}</Link>
       </nav>
 
       <p className="label-mono mt-5" role="status">
@@ -41,7 +53,7 @@ export function ProjectIndex({ items, selectedDomain }: { items: Project[]; sele
                 <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1">{project.technologies.map((technology) => <li className="label-mono" key={technology}>{technology}</li>)}</ul>
               </div>
               <div className="flex flex-wrap gap-4 md:max-w-56 md:flex-col md:items-end md:text-right">
-                <span className="label-mono">{project.domainIds.map((id) => domains[id]?.label).filter(Boolean).join(' · ')}</span>
+                <span className="label-mono">{project.domainIds.map((id) => domainLabel(id, vi)).join(' · ')}</span>
                 {project.status && <span className="label-mono">{vi ? (project.status === 'in-progress' ? 'đang thực hiện' : project.status === 'completed' ? 'hoàn thành' : 'tạm dừng') : project.status}</span>}
                 {project.event && <span className="label-mono">{project.event}</span>}
               </div>

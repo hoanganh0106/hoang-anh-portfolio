@@ -8,7 +8,7 @@ import { siteUrl } from '@/lib/site-config'
 
 export const metadata: Metadata = {
   title: 'Research',
-  description: 'Speech separation, acoustic signal processing, and state-space model research notes.',
+  description: 'Research notes on speech separation, acoustic signal processing, and state-space models.',
   alternates: { canonical: siteUrl ? `${siteUrl}/research/` : undefined },
 }
 

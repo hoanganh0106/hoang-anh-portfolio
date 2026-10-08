@@ -9,7 +9,7 @@ type Props = { projects: Project[] }
 
 function status(project: Project, vi: boolean) {
   if (project.status === 'in-progress') return vi ? 'Đang thực hiện · research prototype' : 'In progress · research prototype'
-  if (project.disclosure === 'summary-only') return vi ? 'Chỉ công bố summary · chưa tuyên bố public paper hay results' : 'Summary only · no public paper or results claimed'
+  if (project.disclosure === 'summary-only') return vi ? 'Chỉ công bố summary · chưa tuyên bố paper hay results' : 'Summary only · no paper or results claimed'
   return vi ? 'Hoàn thành · public project' : 'Completed · public project'
 }
 
@@ -77,7 +77,7 @@ export default function FeaturedWork({ projects }: Props) {
   const vi = language === 'vi'
   return (
     <section className="home-section" aria-labelledby="selected-work-title">
-      <div className="home-section-heading"><p className="home-eyebrow">01 / {vi ? 'Project tiêu biểu' : 'Selected work'}</p><h2 id="selected-work-title">{vi ? 'Project được ghi chép rõ ràng, đúng mức.' : 'Selected work, documented precisely.'}</h2></div>
+      <div className="home-section-heading"><p className="home-eyebrow">01 / {vi ? 'Project tiêu biểu' : 'Selected work'}</p><h2 id="selected-work-title">{vi ? 'Project tiêu biểu, được ghi chép rõ ràng và đúng phạm vi.' : 'Selected work, documented with clarity and appropriate scope.'}</h2></div>
       <div className="featured-work-grid">
         {projects.map((project, index) => <article className={`project-card ${art(project)}`} key={project.slug}>
           <div className="project-art" aria-hidden="true"><span className="project-art-index">0{index + 1}</span><ProjectDiagram project={project} /></div>

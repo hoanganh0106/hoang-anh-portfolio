@@ -8,7 +8,7 @@ import { siteUrl } from '@/lib/site-config'
 
 export const metadata: Metadata = {
   title: 'Projects',
-  description: 'Published systems, edge AI, research and electronics projects.',
+  description: 'A working log of systems, edge AI, research, and electronics projects with clear status and scope.',
   alternates: { canonical: siteUrl ? `${siteUrl}/projects/` : undefined },
 }
 

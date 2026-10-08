@@ -1,0 +1,320 @@
+/*
+ * Visual polish layer
+ *
+ * This file is intentionally scoped to the existing editorial primitives. It
+ * adds tactile states and responsive guardrails without changing the content
+ * model or making any interaction necessary to understand a page.
+ */
+
+:root {
+  --polish-shadow-rest: 0 8px 24px color-mix(in oklab, var(--foreground) 5%, transparent);
+  --polish-shadow-hover: 0 18px 42px color-mix(in oklab, var(--foreground) 12%, transparent);
+  --polish-line: color-mix(in oklab, var(--foreground) 16%, transparent);
+  --polish-accent-line: color-mix(in oklab, var(--accent) 42%, transparent);
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: color-mix(in oklab, var(--accent) 18%, transparent);
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: color-mix(in oklab, var(--accent) 18%, transparent);
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Keep the sticky shell calm while making its controls feel intentional. */
+.site-header-inner {
+  position: relative;
+}
+
+.site-header-tools {
+  min-width: 0;
+}
+
+.site-header-tools > button[aria-label="Toggle color theme"] {
+  min-height: 2.2rem;
+  border-color: var(--polish-line);
+  border-radius: 999px;
+  padding-inline: .7rem;
+  transition: color .2s var(--ease-standard), background-color .2s var(--ease-standard), border-color .2s var(--ease-standard), transform .2s var(--ease-standard);
+}
+
+.site-header-tools > button[aria-label="Toggle color theme"]:hover {
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 8%, transparent);
+  transform: translateY(-1px);
+}
+
+.site-header-tools > button[aria-label="Toggle color theme"]:active {
+  transform: translateY(0) scale(.97);
+}
+
+.home-mobile-nav {
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x proximity;
+}
+
+.home-mobile-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.home-mobile-nav .home-nav-link {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+/* Buttons and signal board: a small amount of depth gives the hero a tactile
+ * feel while keeping the flat technical language of the rest of the site. */
+.home-button {
+  min-height: 3rem;
+  border-radius: 2px;
+  box-shadow: 0 1px 0 color-mix(in oklab, var(--foreground) 16%, transparent);
+}
+
+.home-button:focus-visible,
+.project-link:focus-visible,
+.text-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.signal-board--hero {
+  transition: transform .45s var(--ease-standard), box-shadow .45s var(--ease-standard), border-color .3s var(--ease-standard);
+}
+
+.signal-board--hero::after {
+  animation-iteration-count: 1;
+  animation-fill-mode: both;
+}
+
+.signal-board--hero:focus-within {
+  border-color: var(--accent);
+}
+
+.hero-scroll-note b {
+  animation: polish-scroll-cue 2.4s ease-in-out infinite;
+}
+
+@keyframes polish-scroll-cue {
+  0%, 100% { opacity: .45; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(.22rem); }
+}
+
+/* Card states are available for keyboard users as well as pointer users. */
+.project-card {
+  isolation: isolate;
+  box-shadow: var(--polish-shadow-rest);
+}
+
+.project-card::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0 0 auto;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform .35s var(--ease-standard);
+  pointer-events: none;
+}
+
+.project-card:focus-within::before {
+  transform: scaleX(1);
+}
+
+.project-card:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--polish-shadow-hover);
+}
+
+.project-art {
+  isolation: isolate;
+}
+
+.project-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, color-mix(in oklab, var(--accent) 8%, transparent), transparent 36%, transparent 68%, color-mix(in oklab, var(--background) 14%, transparent));
+  opacity: .8;
+}
+
+.project-diagram {
+  position: relative;
+  z-index: 1;
+  transition: transform .45s var(--ease-standard), filter .45s var(--ease-standard);
+}
+
+.page-shell__content > div > ol > li:focus-within {
+  border-left-color: var(--accent);
+}
+
+.page-shell__content > div > ol > li h2 a,
+.page-shell__content article h2 a {
+  text-underline-offset: .25em;
+  text-decoration-thickness: 1px;
+  transition: color .2s var(--ease-standard), text-decoration-color .2s var(--ease-standard);
+}
+
+.page-shell__content > div > ol > li h2 a:focus-visible,
+.page-shell__content article h2 a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.page-shell__content :is(nav[aria-label="Filter projects"], nav[aria-label="Lọc project"]) a {
+  transition: color .2s var(--ease-standard), background-color .2s var(--ease-standard), border-color .2s var(--ease-standard), transform .2s var(--ease-standard);
+}
+
+.page-shell__content :is(nav[aria-label="Filter projects"], nav[aria-label="Lọc project"]) a:hover {
+  transform: translateY(-1px);
+}
+
+.page-shell__content :is(nav[aria-label="Filter projects"], nav[aria-label="Lọc project"]) a:active {
+  transform: translateY(0) scale(.98);
+}
+
+/* Quietly separate the editorial sections on long pages. */
+.page-shell__content > section,
+.page-shell__content > div > article {
+  scroll-margin-top: 7rem;
+}
+
+.page-shell__content > section > h2 {
+  position: relative;
+}
+
+.page-shell__content > section > h2::before {
+  content: "";
+  display: inline-block;
+  width: 1.8rem;
+  height: 1px;
+  margin: 0 .7rem .35rem 0;
+  background: var(--accent);
+}
+
+.home-lower-grid > :is(div, article) {
+  box-shadow: var(--polish-shadow-rest);
+  transition: border-color .3s var(--ease-standard), box-shadow .3s var(--ease-standard), transform .3s var(--ease-standard);
+}
+
+.home-lower-grid > :is(div, article):focus-within {
+  border-color: var(--accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .signal-board--hero:hover {
+    transform: translateY(-4px) rotate(.25deg);
+    box-shadow: 20px 28px 64px color-mix(in oklab, var(--foreground) 14%, transparent), 18px 22px 0 color-mix(in oklab, var(--accent) 12%, var(--background));
+  }
+
+  .project-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .project-card:hover .project-diagram {
+    transform: scale(1.025);
+    filter: saturate(1.08);
+  }
+
+  .home-lower-grid > :is(div, article):hover {
+    transform: translateY(-3px);
+    border-color: var(--polish-accent-line);
+    box-shadow: var(--polish-shadow-hover);
+  }
+}
+
+@media (pointer: coarse) {
+  .home-button,
+  .home-nav-link,
+  .language-toggle button,
+  .site-header-tools > button[aria-label="Toggle color theme"] {
+    min-height: 2.75rem;
+  }
+
+  .project-card,
+  .home-lower-grid > :is(div, article) {
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .site-header-tools {
+    gap: .45rem;
+  }
+
+  .language-toggle {
+    flex: 0 0 auto;
+  }
+
+  .home-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .home-actions .home-button {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .project-card::before {
+    transform: scaleX(1);
+    opacity: .48;
+  }
+
+  .page-shell__content > section > h2::before {
+    width: 1.25rem;
+    margin-right: .5rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-title > span {
+    white-space: normal;
+  }
+
+  .hero-title {
+    max-width: 18ch !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header-tools > button[aria-label="Toggle color theme"],
+  .home-button,
+  .signal-board--hero,
+  .project-card,
+  .project-card::before,
+  .project-diagram,
+  .home-lower-grid > :is(div, article),
+  .page-shell__content :is(nav[aria-label="Filter projects"], nav[aria-label="Lọc project"]) a,
+  .page-shell__content > div > ol > li h2 a,
+  .page-shell__content article h2 a {
+    transition: none !important;
+  }
+
+  .signal-board--hero::after {
+    animation: none !important;
+  }
+
+  .hero-scroll-note b {
+    animation: none !important;
+  }
+
+  .signal-board--hero:hover,
+  .project-card:hover .project-diagram,
+  .home-lower-grid > :is(div, article):hover,
+  .page-shell__content :is(nav[aria-label="Filter projects"], nav[aria-label="Lọc project"]) a:hover {
+    transform: none !important;
+    filter: none !important;
+  }
+}

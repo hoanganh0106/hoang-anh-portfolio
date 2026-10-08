@@ -21,7 +21,7 @@ export default function ScrollAtmosphere() {
       '.home-focus > *',
       '.home-map-section .home-section-heading',
       '.home-map-section .system-map',
-      '.home-lower-grid > div',
+      '.home-lower-grid > :is(div, article)',
       '.page-shell__header > *',
       '.page-shell__content > section',
       '.page-shell__content > div > article',

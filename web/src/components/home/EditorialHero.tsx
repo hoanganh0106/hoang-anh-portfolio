@@ -11,7 +11,7 @@ export default function EditorialHero() {
       <div className="home-hero-copy">
         <div className="hero-kicker-row">
           <p className="home-eyebrow">Hoang Anh Nguyen · {vi ? 'Năm 3' : 'Year 3'}</p>
-          <span className="hero-status"><span aria-hidden="true" /> {vi ? 'Học và ghi chép công khai' : 'Learning in public'}</span>
+          <span className="hero-status"><span aria-hidden="true" /> {vi ? 'Học và ghi chép công khai' : 'Documenting the work as I learn'}</span>
         </div>
         <h1 id="home-title" className="hero-title">
           {vi ? (
@@ -32,7 +32,7 @@ export default function EditorialHero() {
             </>
           )}
         </h1>
-        <p className="home-lede">{vi ? 'Khám phá systems, Edge AI, speech separation và electronics thông qua các project kết nối software, signal và physical device.' : 'Exploring systems, edge AI, speech separation, and electronics through projects that connect software, signals, and physical devices.'}</p>
+        <p className="home-lede">{vi ? 'Xây dựng và ghi chép các hệ thống nối software, signal và physical hardware — từ edge AI prototype tới nghiên cứu speech separation.' : 'Building and documenting systems that connect software, signals, and physical hardware — from edge AI prototypes to speech-separation research.'}</p>
         <div className="hero-meta-grid" aria-label={vi ? 'Hướng kỹ thuật hiện tại' : 'Current engineering path'}>
           <div><span>{vi ? 'Hiện tại' : 'Current'}</span><strong>Edge AI + Speech</strong></div>
           <div><span>{vi ? 'Phương pháp' : 'Method'}</span><strong>Build → Measure → Learn</strong></div>
@@ -41,11 +41,11 @@ export default function EditorialHero() {
         <p className="home-institution">Hanoi University of Science and Technology</p>
         <div className="home-actions">
           <Link className="home-button home-button-primary" href="/projects">{vi ? 'Xem project tiêu biểu' : 'View selected work'} <span aria-hidden="true">↗</span></Link>
-          <Link className="home-button" href="/about">{vi ? 'Theo dõi hành trình' : 'Trace the path'} <span aria-hidden="true">→</span></Link>
+          <Link className="home-button" href="/about">{vi ? 'Khám phá hành trình' : 'Explore the path'} <span aria-hidden="true">→</span></Link>
         </div>
       </div>
 
-      <div className="signal-board signal-board--hero" aria-label={vi ? 'Sơ đồ abstract signal processing thể hiện acoustic waveform qua edge processing path' : 'Abstract signal processing board showing an acoustic waveform moving through an edge processing path'} role="img">
+      <div className="signal-board signal-board--hero" aria-label={vi ? 'Sơ đồ xử lý tín hiệu khái niệm: acoustic waveform đi qua edge processing path' : 'Abstract signal processing board showing an acoustic waveform moving through an edge processing path'} role="img">
         <div className="signal-board-topbar"><span>Signal path / HN-01</span><span>Software → Physical</span></div>
         <svg viewBox="0 0 640 520" aria-hidden="true" focusable="false">
           <rect x="24" y="24" width="592" height="472" rx="8" className="signal-board-frame" />
@@ -61,7 +61,7 @@ export default function EditorialHero() {
         <div className="signal-board-footer" aria-hidden="true"><span><i /> Acoustic</span><span><i /> Inference</span><span><i /> Hardware</span></div>
       </div>
 
-      <p className="hero-scroll-note" aria-hidden="true"><span>{vi ? 'Scroll để đi xuyên hệ thống' : 'Scroll to trace the system'}</span><b>↓</b></p>
+      <p className="hero-scroll-note" aria-hidden="true"><span>{vi ? 'Scroll để theo dõi hệ thống' : 'Scroll to trace the system'}</span><b>↓</b></p>
     </section>
   )
 }
