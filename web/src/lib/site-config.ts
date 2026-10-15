@@ -13,5 +13,16 @@ function getSiteUrl(value: string | undefined) {
   }
 }
 
-export const siteConfig = { name:'Hoang Anh Nguyen', shortName:'HN', title:'Hoang Anh Nguyen — Technical Portfolio', description:'Systems, edge AI, speech separation, and electronics — documented from software to physical hardware.', tagline:'Systems, edge AI, speech separation, and electronics — from software to physical hardware.', role:'Electronics & Telecommunications Engineering', institution:'Hanoi University of Science and Technology', year:'Year 3', email:'', linkedin:'', github:'https://github.com/hoanganh0106' }
+export const siteConfig = {
+  project: 'Edge AI for Health',
+  name: 'Hoang Anh Nguyen',
+  nameVi: 'Nguyễn Hoàng Anh',
+  title: 'Edge AI for Health — community medical devices with on-device AI',
+  description: 'A student-led, non-profit project building low-cost medical devices that run AI on the device itself, for clinics with few specialists and unreliable internet.',
+  role: 'Electronics & Telecommunications Engineering',
+  institution: 'Hanoi University of Science and Technology',
+  year: 'Year 3',
+  email: '',
+  github: 'https://github.com/hoanganh0106',
+}
 export const siteUrl = getSiteUrl(configuredSiteUrl)

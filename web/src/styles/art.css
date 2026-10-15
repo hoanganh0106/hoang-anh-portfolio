@@ -1,0 +1,29 @@
+/* Device illustrations (components/devices/DeviceArt.tsx). */
+.device-art svg { display: block; width: 100%; height: auto; }
+
+.art-soft { fill: var(--primary-soft); }
+.art-body { fill: var(--surface); stroke: var(--ink); stroke-width: 2.5; }
+.art-diaphragm { fill: var(--surface-2); stroke: var(--ink); stroke-width: 2; }
+.art-dot, .art-dot circle { fill: var(--ink); }
+.art-screen { fill: var(--screen); }
+.art-screen-line { stroke: var(--screen-ink); stroke-width: 3; stroke-linecap: round; fill: none; opacity: .7; }
+.art-grid { stroke: var(--screen-ink); stroke-width: 1; stroke-dasharray: 3 4; fill: none; opacity: .4; }
+.art-tube, .art-band { fill: none; stroke: var(--ink); stroke-width: 9; stroke-linecap: round; }
+.art-band { stroke-width: 10; }
+.art-wave { fill: none; stroke: var(--primary); stroke-width: 3; stroke-linecap: round; }
+.art-wave-muted { fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; }
+.art-trace-accent, .art-trace-accent-thin { fill: none; stroke: var(--screen-accent); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.art-trace-accent-thin { stroke-width: 2; }
+.art-trace-primary { fill: none; stroke: var(--primary); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.art-trace-warm { fill: none; stroke: var(--warm); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.art-trace-muted { fill: none; stroke: var(--muted); stroke-width: 3; stroke-linecap: round; }
+.art-fill-accent { fill: var(--primary); }
+.art-fill-warm { fill: var(--warm); stroke: var(--ink); stroke-width: 2.5; }
+.art-ring { fill: none; stroke: var(--ink); stroke-width: 2.5; }
+.art-ring-thick { fill: none; stroke: var(--line-strong); stroke-width: 8; }
+.art-ring-active { fill: none; stroke: var(--primary); stroke-width: 8; stroke-linecap: round; }
+.art-led { fill: var(--warm); }
+.art-ground { stroke: var(--line-strong); stroke-width: 2; stroke-linecap: round; }
+.art-flag { fill: var(--warm-soft); stroke: var(--warm); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.art-flag-line { fill: none; stroke: var(--warm); stroke-width: 1.5; }
+.art-bars rect { fill: var(--screen-accent); }

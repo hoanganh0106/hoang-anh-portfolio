@@ -1,44 +1,56 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { PageShell } from '@/components/layout/PageShell'
-import Localized from '@/components/language/Localized'
-import { projects } from '@/lib/projects'
-import { projectVi } from '@/lib/project-i18n'
+import Localized, { Tx } from '@/components/language/Localized'
+import { projectsByTrack } from '@/lib/projects'
 import { siteUrl } from '@/lib/site-config'
 
 export const metadata: Metadata = {
   title: 'Research',
-  description: 'Research notes on speech separation, acoustic signal processing, and state-space models.',
+  description: 'Speech and audio source-separation research behind the acoustic medical devices.',
   alternates: { canonical: siteUrl ? `${siteUrl}/research/` : undefined },
 }
 
+const links = [
+  { from: 'SPMamba / MossFormer 2', to: { en: 'Edge AI Stethoscope', vi: 'Ống nghe Edge AI' }, why: { en: 'Separate heart sounds from lung sounds in one recording.', vi: 'Tách tiếng tim khỏi tiếng phổi trong cùng một bản ghi.' } },
+  { from: 'SPMamba / MossFormer 2', to: { en: 'Cough Listener', vi: 'Máy nghe tiếng ho' }, why: { en: 'Pull a cough out of speech and room noise.', vi: 'Tách tiếng ho khỏi giọng nói và tiếng ồn trong phòng.' } },
+]
+
 export default function Research() {
-  const researchProjects = projects.filter((project) => project.domainIds.includes('research') && project.visibility === 'published')
   return (
     <PageShell
-      index="Section 03 / Research"
-      title="Research"
-      intro="Notes on ongoing speech separation work. These are summaries of what was done and why — not published results."
-      indexVi="Phần 03 / Research"
-      titleVi="Research"
-      introVi="Ghi chú về các hướng speech separation đang được thực hiện. Đây là summary về những gì đã làm và lý do thực hiện — không phải published results."
+      eyebrow={{ en: 'Research', vi: 'Nghiên cứu' }}
+      title={{ en: 'Hearing one sound clearly when many overlap.', vi: 'Nghe rõ một âm thanh khi nhiều âm thanh chồng lên nhau.' }}
+      intro={{
+        en: 'My research is on source separation: splitting a mixed recording into the sounds that make it up. It started with speech and is now the core of the project’s acoustic devices.',
+        vi: 'Hướng nghiên cứu của tôi là tách nguồn âm: tách một bản ghi bị trộn thành từng âm thanh tạo nên nó. Tôi bắt đầu với giọng nói, và giờ đây nó là phần lõi của các thiết bị âm thanh trong dự án.',
+      }}
     >
-      <div className="space-y-12">
-        {researchProjects.map((project, index) => (
-          <article key={project.slug} id={project.slug} className="scroll-mt-32 grid gap-6 md:grid-cols-[auto_minmax(0,1fr)] md:gap-10">
-            <span className="label-mono md:pt-2">{`R-${String(index + 1).padStart(2, '0')}`}</span>
-            <div className="min-w-0">
-              <h2 className="text-xl font-semibold tracking-tight"><Link href={`/projects/${project.slug}`} className="hover:text-accent">{project.title}</Link></h2>
-              <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1">
-                <span className="label-mono">{project.event ?? <Localized en="Internal study" vi="Internal study" />}</span>
-                <span className="label-mono">{project.disclosure === 'summary-only' ? <Localized en="Summary only — no public paper or code" vi="Chỉ công bố summary — chưa có public paper hay code" /> : project.disclosure}</span>
-              </div>
-              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground"><Localized en={project.summary} vi={projectVi[project.slug]?.summary ?? project.summary} /></p>
-              <p className="label-mono mt-6"><Link href={`/projects/${project.slug}`} className="hover:text-accent"><Localized en="Read detailed project" vi="Đọc chi tiết project" /> →</Link></p>
-            </div>
-          </article>
+      <ul className="research-cards">
+        {projectsByTrack('research').map((project, index) => (
+          <li key={project.slug}>
+            <span className="research-cards__num" aria-hidden="true">R{index + 1}</span>
+            <h2><Link href={`/projects/${project.slug}`}><Tx t={project.title} /></Link></h2>
+            {project.event && <p className="research-cards__event"><Tx t={project.event} /></p>}
+            <p><Tx t={project.overview} /></p>
+            {project.note && <p className="fine-print"><Tx t={project.note} /></p>}
+          </li>
         ))}
-      </div>
+      </ul>
+
+      <section className="track" aria-labelledby="bridge-title">
+        <h2 id="bridge-title" className="track__title"><Localized en="From research to devices" vi="Từ nghiên cứu tới thiết bị" /></h2>
+        <ul className="bridge">
+          {links.map(item => (
+            <li key={item.to.en}>
+              <span className="chip-like">{item.from}</span>
+              <span aria-hidden="true">→</span>
+              <strong><Tx t={item.to} /></strong>
+              <p><Tx t={item.why} /></p>
+            </li>
+          ))}
+        </ul>
+      </section>
     </PageShell>
   )
 }

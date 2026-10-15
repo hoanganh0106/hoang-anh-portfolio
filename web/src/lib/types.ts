@@ -1,30 +1,24 @@
-export type DomainId = 'systems' | 'edge-ai' | 'research' | 'electronics' | 'ic-design'
+export type Text = { en: string; vi: string }
+
+export type Track = 'device' | 'research' | 'other'
+
+export type Status = 'prototype' | 'in-development' | 'completed'
 
 export type Project = {
   slug: string
-  title: string
-  summary: string
-  domainIds: DomainId[]
-  kind: 'lab' | 'experiment' | 'research' | 'prototype'
-  status?: 'in-progress' | 'completed' | 'paused'
+  title: Text
+  track: Track
+  status: Status
   visibility: 'draft' | 'published'
-  disclosure: 'public' | 'summary-only'
-  contribution: string[]
+  summary: Text
+  overview: Text
+  /** Who the device is for and the gap it addresses. Devices only. */
+  forWhom?: Text
+  pipeline?: Text[]
+  hardware?: Text[]
+  contribution: Text[]
   technologies: string[]
-  featuredOrder?: number
+  event?: Text
+  note?: Text
   links?: { github?: string; paper?: string; demo?: string }
-  image?: { src: string; alt: string; width: number; height: number }
-  pipeline?: string[]
-  event?: string
-  overview?: string
-  architecture?: string[]
-  resultsOrLearnings?: string[]
-  disclosureNote?: string
-}
-
-export type Direction = {
-  id: string
-  title: string
-  state: 'next' | 'future'
-  note?: string
 }

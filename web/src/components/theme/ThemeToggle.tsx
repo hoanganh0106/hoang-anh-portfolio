@@ -1,9 +1,13 @@
 'use client'
 import { useTheme } from './ThemeProvider'
-import { useLanguage } from '@/components/language/LanguageProvider'
 
-export default function ThemeToggle(){
-  const {theme,toggleTheme}=useTheme()
-  const {language}=useLanguage()
-  return <button type="button" className="label-mono border border-border px-2 py-1" aria-label="Toggle color theme" onClick={toggleTheme}>{language==='vi'?(theme==='dark'?'TỐI':'SÁNG'):(theme==='dark'?'DARK':'LIGHT')}</button>
+export default function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+  return (
+    <button type="button" className="icon-button" aria-label="Toggle color theme" aria-pressed={theme === 'dark'} onClick={toggleTheme}>
+      {theme === 'dark'
+        ? <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" /><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" /></svg>
+        : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" /></svg>}
+    </button>
+  )
 }

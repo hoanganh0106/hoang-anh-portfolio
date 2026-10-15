@@ -13,3 +13,5 @@ test-results/
 *.blend
 *.blend1
 *.tar.gz
+_backup-*/
+.claude/
