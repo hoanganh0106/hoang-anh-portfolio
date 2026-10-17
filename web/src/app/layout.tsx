@@ -4,6 +4,7 @@ import './globals.css'
 import '../styles/art.css'
 import Header from '@/components/navigation/Header'
 import Footer from '@/components/footer/Footer'
+import MotionEnhancer from '@/components/layout/MotionEnhancer'
 import { ThemeProvider } from '@/components/theme/ThemeProvider'
 import ThemeScript from '@/components/theme/ThemeScript'
 import { LanguageProvider } from '@/components/language/LanguageProvider'
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <LanguageProvider>
             <a className="skip-link" href="#main">Skip to content</a>
+            <MotionEnhancer />
             <Header />
             <main id="main">{children}</main>
             <Footer />
